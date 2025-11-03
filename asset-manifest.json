@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Child-Tracker/static/css/main.889c0c3f.css",
+    "main.js": "/Child-Tracker/static/js/main.52e8709d.js",
+    "index.html": "/Child-Tracker/index.html",
+    "main.889c0c3f.css.map": "/Child-Tracker/static/css/main.889c0c3f.css.map",
+    "main.52e8709d.js.map": "/Child-Tracker/static/js/main.52e8709d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.889c0c3f.css",
+    "static/js/main.52e8709d.js"
+  ]
+}
