@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+.sidebar-title {
+  font-size: clamp(18px, 2vw, 28px);
+  font-weight: 700;
+  color: #93c5fd;
+  margin: 0 0 12px 0;
+}
+
