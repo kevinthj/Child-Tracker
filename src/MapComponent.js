@@ -4,6 +4,8 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { ref, onValue } from 'firebase/database';
+import { db } from './firebase'; // ✅ make sure you have firebase.js configured
 
 // Fix missing marker icon issue
 L.Marker.prototype.options.icon = L.icon({
@@ -12,49 +14,38 @@ L.Marker.prototype.options.icon = L.icon({
 });
 
 export default function MapComponent() {
-  const [location, setLocation] = useState([32.733094, -97.112666]); // Default coordinates
-  const [status, setStatus] = useState('Waiting for data...'); // Default status
-  const [espIp] = useState('172.20.10.12'); // Replace with your ESP8266 IP
+  const [location, setLocation] = useState([32.733094, -97.112666]);
+  const [status, setStatus] = useState('Waiting for data...');
 
-  // Fetch the data from ESP8266
   useEffect(() => {
-    const fetchLocation = async () => {
-      try {
-        const response = await fetch(`http://${espIp}/data`);
-        const data = await response.json();
-        
-        setLocation([data.lat, data.lon]); // Update the location
-        setStatus(data.status); // Update the status (INSIDE/OUTSIDE)
-      } catch (error) {
-        console.error('Error fetching data:', error);
+    const espRef = ref(db, 'esp-1'); // ✅ listen to esp-1 in Firebase
+    const unsubscribe = onValue(espRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setLocation([data.latitude, data.longitude]); // ✅ read from Firebase
+        setStatus(data.status);
+        console.log("Firebase updated:", data);
       }
-    };
+    });
 
-    // Fetch the data when the component mounts
-    fetchLocation();
-
-    // Set up polling every 5 seconds to keep the data updated
-    const interval = setInterval(fetchLocation, 5000);
-    
-    // Cleanup interval when the component unmounts
-    return () => clearInterval(interval);
-  }, [espIp]); // Dependency on espIp so it only runs when espIp changes
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div style={{ height: '100vh', padding: 20 }}>
       <div style={{ color: 'white', marginBottom: 8 }}>I should be above the map</div>
 
       <MapContainer
-        center={location} // Set map center to current location
+        center={location}
         zoom={16}
         style={{ height: '90%', width: '100%', border: '4px solid #444' }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        
-        <Marker position={location}> {/* Dynamically update marker position */}
+
+        <Marker position={location}>
           <Popup>
-            <strong>Status: </strong>{status}<br />
-            <strong>Lat:</strong> {location[0]} <br />
+            <strong>Status:</strong> {status}<br />
+            <strong>Lat:</strong> {location[0]}<br />
             <strong>Lon:</strong> {location[1]}
           </Popup>
         </Marker>

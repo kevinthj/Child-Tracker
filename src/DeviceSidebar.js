@@ -9,17 +9,23 @@ const chip = (color, text) => (
 
 export default function DeviceSidebar({ devices, selectedId, onSelect }) {
   return (
-    <aside style={{
-      width: '30%', minWidth: 280, maxWidth: 420,
-      background: '#111827', borderRight: '1px solid #1f2937',
-      padding: 16, boxSizing: 'border-box'
-    }}>
+      <aside style={{
+        width: '100%', // use full available width
+        background: '#111827',
+        padding: 16,
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'stretch',
+        height: '100%', // fill its container height
+      }}>
       <h2 className="sidebar-title" style={{ margin: 0, marginBottom: 12, fontSize: 'clamp(18px, 2vw, 28px)', fontWeight: 700, color: '#93c5fd' }}>
         Safety Net — Devices
       </h2>
 
       {devices.map(d => (
-        <button
+        <button 
           key={d.id}
           onClick={() => onSelect(d.id)}
           style={{
